@@ -1,3 +1,7 @@
+package Logic;
+
+import javafx.util.Pair;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,7 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -15,35 +19,34 @@ public class networkBuilder {
 	
 
 	
-	public static List<Airport> read(String pathNodos, String pathEnlaces) throws IOException{
-		List<Airport> airports = new ArrayList<Airport>();
+	public static List<Airport> read(String nodesPath, String edgesPath) throws IOException{
+		List<Airport> airports;
 		try {
-			
-			
-			
-			File archivo = new File (pathNodos);
-			InputStream input = new FileInputStream(archivo);
+			File nodesFile = new File (nodesPath);
+			InputStream input = new FileInputStream(nodesFile);
 			BufferedReader br = new BufferedReader(new InputStreamReader(input));
-				
+
+			//using skip(1) to avoid the first line which has the attributes names in the file
 			airports = br.lines().skip(1).map(mapToItem).collect(Collectors.toList());
 			br.close();
-				
+
+
 			} catch (FileNotFoundException e) {
-				
-				e.printStackTrace();
+		        throw new FileNotFoundException("nodes file not founded");
 			}
 			
-			// ------aristas
+			// ------Edges
 			
-			File archivo = new File (pathEnlaces);
-			FileReader fr = new FileReader (archivo);
+			File edgesFile = new File (edgesPath);
+			FileReader fr = new FileReader (edgesFile);
 			BufferedReader br = new BufferedReader(fr);
-			String linea = br.readLine();
-			while((linea=br.readLine())!=null){
-				String []  lineas = linea. split(",");
+			String line;
+			//adding neighbors info from the edgesFile
+			while((line=br.readLine())!=null){
+				String []  lines = line. split(",");
 				for(Airport a: airports){
-					if(a.getIata().equals(lineas[0])){
-						a.addNeighbor(lineas[1]);
+					if(a.getIata().equals(lines[0])){
+						a.addNeighbor(lines[1]);
 					}
 				}
 			}
@@ -55,7 +58,7 @@ public class networkBuilder {
 	private static Function<String, Airport> mapToItem = (line) -> {
 		String[] p = line.split(",");// a CSV has comma separated lines
 		Airport item = new Airport();
-		item.setLabel(p[0]);//<-- this is the first column in the csv file
+		item.setLabel(p[0]);//this is the first column of the csv file
 		item.setCountry(p[2]);
 		item.setIcao(p[4]);
 		item.setIata(p[3]);

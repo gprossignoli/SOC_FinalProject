@@ -1,4 +1,4 @@
-package SimulationLogic;
+package Logic.SimulationLogic;
 
 import java.io.IOException;
 import java.util.List;

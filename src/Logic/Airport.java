@@ -1,3 +1,5 @@
+package Logic;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,14 +11,23 @@ public class Airport {
 	private boolean locked;
 	private List<String> neighbors;
 	private float load;
-	
-	public Airport(String label, String Icao, String country){}
-	
-	public Airport(){
-		neighbors = new ArrayList<String>();
-		locked = false;
-	}
-	
+
+    public Airport(){
+        neighbors = new ArrayList<String>();
+        locked = false;
+    }
+
+	public Airport(String label, String Icao, String Iata,
+                   String country, boolean locked, List<String> neighbors, float load){
+	    this.label = label;
+	    this.Icao = Icao;
+	    this.Iata = Iata;
+	    this.country = country;
+	    this.locked = locked;
+	    this.neighbors = neighbors;
+	    this.load = load;
+    }
+
 	public void setLabel(String a){
 		this.label = a;
 	}
@@ -52,5 +63,12 @@ public class Airport {
 	public float getLoad(){
 		return this.load;
 	}
-	
+
+    public boolean isLocked() {
+        return this.locked;
+    }
+
+    public List<String> getNeighbors() {
+        return neighbors;
+    }
 }
