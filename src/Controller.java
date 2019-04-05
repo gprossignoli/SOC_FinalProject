@@ -26,7 +26,7 @@ public class Controller {
 	}
 
     public void initSimulation(){
-        sim.executeSimulation();
+	    sim.executeSimulation();
     }
 
 	private void buildNetwork(String nodesPath, String edgesPath) throws IOException{

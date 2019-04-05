@@ -18,30 +18,50 @@ public class PropagationModel extends Simulation {
 	public void executeSimulation(){
         Random random = new Random();
         int time = 0;
-        int nodesDowned = 0;
+        int tries = 0;
+
 
         //At time 0 fails a small number of nodes picked randomly
         for(int i = 0; i < initialAmountOfAffectedNodes; ++i){
-            airports.get(random.nextInt(airports.size())).setLock(true);
+            int randomAirport = random.nextInt(airports.size());
+
+           Airport a = airports.get(randomAirport);
+            a.setLock(true);
+
+            availableAirports.remove(a.getIata());
+            downedAirports.add(a.getIata());
         }
 
-        nodesDowned = initialAmountOfAffectedNodes;
         ++time;
         Airport a;
-        while(time <= steps && nodesDowned < airports.size()){
+        //if the status of the net doesn't change in the 3 next steps then the cascade was stopped
+        while(time <= steps && downedAirports.size() < availableAirports.size() && tries <= 3){
             a = airports.get(random.nextInt(airports.size()));
-            while(a.isLocked()){a = airports.get(random.nextInt(airports.size()));}
+            while(!a.isLocked())
+                a = airports.get(random.nextInt(airports.size()));
 
-            checkStatus(a);
+            if(!tryToLockNode(a))
+                ++tries;
         }
 	}
 
-    private boolean checkStatus(Airport a) {
+    private boolean tryToLockNode(Airport a) {
 	    List<String> neighbors = a.getNeighbors();
 	    int neighborsDowned = 0;
 	    for(String s : neighbors){
-	        if()
+	        if(downedAirports.contains(s)){
+	            neighborsDowned++;
+            }
         }
+
+        if((neighborsDowned/neighbors.size()) > threshold){
+            a.setLock(true);
+            availableAirports.remove(a.getIata());
+            downedAirports.add(a.getIata());
+            return true;
+        }
+
+        return false;
     }
 
 }
