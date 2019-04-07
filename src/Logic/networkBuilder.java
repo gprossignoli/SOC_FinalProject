@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -19,15 +20,24 @@ public class networkBuilder {
 	
 
 	
-	public static List<Airport> read(String nodesPath, String edgesPath) throws IOException{
-		List<Airport> airports;
+	public static Map<String,Airport> read(String nodesPath, String edgesPath) throws IOException{
+		Map<String,Airport> airports = new HashMap<>();
 		try {
 			File nodesFile = new File (nodesPath);
 			InputStream input = new FileInputStream(nodesFile);
 			BufferedReader br = new BufferedReader(new InputStreamReader(input));
 
-			//using skip(1) to avoid the first line which has the attributes names in the file
-			airports = br.lines().skip(1).map(mapToItem).collect(Collectors.toList());
+			//using skip(1) to avoid the first currentLine which has the attributes names in the file
+            String currentLine;
+			while((currentLine = br.readLine()) != null){
+                String[] p = currentLine.split(",");// a CSV has comma separated lines
+                Airport item = new Airport();
+                item.setLabel(p[0]);//this is the first column of the csv file
+                item.setCountry(p[2]);
+                item.setIcao(p[4]);
+                item.setIata(p[3]);
+			    airports.put(p[3],item);
+            }
 			br.close();
 
 
@@ -36,34 +46,25 @@ public class networkBuilder {
 			}
 			
 			// ------Edges
-			
-			File edgesFile = new File (edgesPath);
-			FileReader fr = new FileReader (edgesFile);
-			BufferedReader br = new BufferedReader(fr);
-			String line;
-			//adding neighbors info from the edgesFile
-			while((line=br.readLine())!=null){
-				String []  lines = line. split(",");
-				for(Airport a: airports){
-					if(a.getIata().equals(lines[0])){
-						a.addNeighbor(lines[1]);
-					}
-				}
+			try {
+                File edgesFile = new File(edgesPath);
+                FileReader fr = new FileReader(edgesFile);
+                BufferedReader br = new BufferedReader(fr);
+                String currentLine;
+                //adding neighbors info from the edgesFile
+                while ((currentLine = br.readLine()) != null) {
+                    String[] line = currentLine.split(",");
+                    airports.get(line[0]).addNeighbor(line[1]);
+                }
+                br.close();
+            }
+            catch (FileNotFoundException e) {
+                throw new FileNotFoundException("edge file not founded");
 			}
-			br.close();
-			
 		return airports;
 	}
 	
-	private static Function<String, Airport> mapToItem = (line) -> {
-		String[] p = line.split(",");// a CSV has comma separated lines
-		Airport item = new Airport();
-		item.setLabel(p[0]);//this is the first column of the csv file
-		item.setCountry(p[2]);
-		item.setIcao(p[4]);
-		item.setIata(p[3]);
-		return item;
-	};
+
 	
 	
 }

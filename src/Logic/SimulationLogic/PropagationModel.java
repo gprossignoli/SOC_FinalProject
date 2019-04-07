@@ -1,7 +1,9 @@
 package Logic.SimulationLogic;
 
 import Logic.Airport;
+import Logic.SimulationLogic.PropagationModelUtils.ReportBuilder;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -10,39 +12,50 @@ public class PropagationModel extends Simulation {
     private Float threshold;
     private Integer initialAmountOfAffectedNodes;
 	public PropagationModel(List<Object> simData) {
-	    super((Integer) simData.get(0),(List) simData.get(1));
-        this.threshold = (Float) simData.get(2);
-        this.initialAmountOfAffectedNodes = (Integer) simData.get(3);
+	    super((Integer) simData.get(0), (HashMap) simData.get(3));
+        this.threshold = (Float) simData.get(1);
+        this.initialAmountOfAffectedNodes = (Integer) simData.get(2);
 	}
 	
 	public void executeSimulation(){
         Random random = new Random();
-        int time = 0;
-        int tries = 0;
+        int iteration = 0;
+        ReportBuilder reportBuilder = null;
+        while (iteration++ < simIterations) {
+            reportBuilder = new ReportBuilder();
+            int tries = 0;
+            super.initSimulationList();
+
+            //At time 0 fails a small number of nodes picked randomly
+            for (int i = 0; i < initialAmountOfAffectedNodes; ++i) {
+                int randomAirport = random.nextInt(airports.size());
+
+                String iata = availableAirports.get(randomAirport);
+                airports.get(iata).setLock(true);
+
+                availableAirports.remove(iata);
+                downedAirports.add(iata);
+            }
 
 
-        //At time 0 fails a small number of nodes picked randomly
-        for(int i = 0; i < initialAmountOfAffectedNodes; ++i){
-            int randomAirport = random.nextInt(airports.size());
+            Airport a;
+            //if the status of the net doesn't change in the 3 next steps then the cascade was stopped
+            while (downedAirports.size() < availableAirports.size() && tries <= 3) {
+                String iata = availableAirports.get(random.nextInt(availableAirports.size()));
+                a = airports.get(iata);
+                while (a.isLocked()){
+                    iata = availableAirports.get(random.nextInt(availableAirports.size()));
+                    a = airports.get(iata);
+                }
 
-           Airport a = airports.get(randomAirport);
-            a.setLock(true);
+                if (!tryToLockNode(a))
+                    ++tries;
+            }
 
-            availableAirports.remove(a.getIata());
-            downedAirports.add(a.getIata());
+            reportBuilder.addData(availableAirports.size(),downedAirports.size());
         }
 
-        ++time;
-        Airport a;
-        //if the status of the net doesn't change in the 3 next steps then the cascade was stopped
-        while(time <= steps && downedAirports.size() < availableAirports.size() && tries <= 3){
-            a = airports.get(random.nextInt(airports.size()));
-            while(!a.isLocked())
-                a = airports.get(random.nextInt(airports.size()));
-
-            if(!tryToLockNode(a))
-                ++tries;
-        }
+        reportBuilder.buildReport();
 	}
 
     private boolean tryToLockNode(Airport a) {
@@ -56,6 +69,7 @@ public class PropagationModel extends Simulation {
 
         if((neighborsDowned/neighbors.size()) > threshold){
             a.setLock(true);
+            airports.put(a.getIata(),a);
             availableAirports.remove(a.getIata());
             downedAirports.add(a.getIata());
             return true;
@@ -63,5 +77,8 @@ public class PropagationModel extends Simulation {
 
         return false;
     }
+
+
+
 
 }
