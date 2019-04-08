@@ -23,5 +23,5 @@ public abstract class Simulation {
         downedAirports.clear();
     }
 
-    public void executeSimulation(){}
+    public abstract boolean executeSimulation();
 }

@@ -9,14 +9,12 @@ public class ReportBuilder {
 
     private List<Integer> availableNodesFrequency;
     private List<Integer> downedNodesFrequency;
-    private Double availableNodesAverage;
-    private Double downedNodesAverage;
+    private String reportId;
 
-    public ReportBuilder(){
+    public ReportBuilder(String reportId){
         availableNodesFrequency = new ArrayList<>();
         downedNodesFrequency = new ArrayList<>();
-        availableNodesAverage = 0.0;
-        downedNodesAverage = 0.0;
+        this.reportId = reportId;
     }
 
     public void addData(Integer availableNodes, Integer downedNodes){
@@ -24,12 +22,12 @@ public class ReportBuilder {
         downedNodesFrequency.add(downedNodes);
     }
 
-    public void buildReport(){
+    public boolean buildReport(){
         Pair<Double,Double> averages = calculateAverages();
         Pair<Double,Double> variances = calculateVariance(averages.getKey(),averages.getValue());
         Pair<Double,Double> typicalDeviations = calculateTypicalDeviation(variances.getKey(),variances.getValue());
-        Report report = new Report(averages, variances, typicalDeviations);
-        report.writeReport();
+        Report report = new Report(averages, variances, typicalDeviations,reportId);
+        return report.writeReport();
     }
 
     private Pair<Double,Double> calculateAverages(){

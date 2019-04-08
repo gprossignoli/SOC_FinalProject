@@ -26,11 +26,27 @@ public class Controller {
 	}
 
     public void initSimulation(){
-	    sim.executeSimulation();
+	    if(!sim.executeSimulation()){
+	        if(!sim.executeSimulation())
+	            System.out.println("The simulation with id: " + simData.getData().get(1) + "was impossible to execute");
+	        else
+                System.out.println("The simulation with id: " + simData.getData().get(1) + "was executed with success");
+        }
+
+        else{
+            System.out.println("The simulation with id: " + simData.getData().get(1) + "was executed with success");
+        }
     }
 
-	private void buildNetwork(String nodesPath, String edgesPath) throws IOException{
-        simData.addData(networkBuilder.read("europeNodes.csv", "europeEdges.csv"));
-	}
+	private boolean buildNetwork(String nodesPath, String edgesPath) {
+        try {
+            simData.addData(networkBuilder.read("europeNodes.csv", "europeEdges.csv"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
 
 }

@@ -16,13 +16,14 @@ public class PropagationModel extends Simulation {
         this.threshold = (Float) simData.get(1);
         this.initialAmountOfAffectedNodes = (Integer) simData.get(2);
 	}
-	
-	public void executeSimulation(){
+
+	@Override
+	public boolean executeSimulation(){
         Random random = new Random();
         int iteration = 0;
         ReportBuilder reportBuilder = null;
         while (iteration++ < simIterations) {
-            reportBuilder = new ReportBuilder();
+            reportBuilder = new ReportBuilder(threshold.toString());
             int tries = 0;
             super.initSimulationList();
 
@@ -55,8 +56,13 @@ public class PropagationModel extends Simulation {
             reportBuilder.addData(availableAirports.size(),downedAirports.size());
         }
 
-        reportBuilder.buildReport();
-	}
+        if (reportBuilder == null) {
+           System.out.println("It was problems with the simulation with id: " + threshold);
+           return false;
+        }
+
+        return reportBuilder.buildReport();
+    }
 
     private boolean tryToLockNode(Airport a) {
 	    List<String> neighbors = a.getNeighbors();

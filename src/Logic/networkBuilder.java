@@ -44,6 +44,9 @@ public class networkBuilder {
 			} catch (FileNotFoundException e) {
 		        throw new FileNotFoundException("nodes file not founded");
 			}
+			catch (IOException e){
+		        throw new IOException("problems with nodes file");
+            }
 			
 			// ------Edges
 			try {
@@ -61,6 +64,9 @@ public class networkBuilder {
             catch (FileNotFoundException e) {
                 throw new FileNotFoundException("edge file not founded");
 			}
+            catch (IOException e){
+                throw new IOException("problems with edge file");
+            }
 		return airports;
 	}
 	
