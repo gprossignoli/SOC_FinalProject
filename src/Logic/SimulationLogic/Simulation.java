@@ -2,6 +2,7 @@ package Logic.SimulationLogic;
 
 import Logic.Airport;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,8 @@ public abstract class Simulation {
     public Simulation(Integer simIterations, Map<String,Airport> airports){
         this.simIterations = simIterations;
         this.airports = airports;
+        this.availableAirports = new ArrayList<>();
+        this.downedAirports = new ArrayList<>();
 
         initSimulationList();
     }

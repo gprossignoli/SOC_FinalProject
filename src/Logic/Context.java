@@ -6,12 +6,12 @@ public class Context {
 
     /*
     Data format:
-    [0] -> simulation model to use
+    [0] -> simulation model to use : "PropagationModel" or "OverLoadModel"
     [last value] -> always be the map with the nodes objects;
     --For propagation model:
         [1] -> iterations per each threshold
         [2] -> threshold, the program will run simulations with the interval [threshold,1];
-            threshold <= 1
+           0 <= threshold <= 1 and will be a Double type value
         [3] -> initial amount of nodes affected, afecta directamente a la probabilidad de que se produzca una cascada;
             0 <= initialAmountOfNodesAffected <= number of nodes in the net
 

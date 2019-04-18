@@ -27,7 +27,8 @@ public class networkBuilder {
 			InputStream input = new FileInputStream(nodesFile);
 			BufferedReader br = new BufferedReader(new InputStreamReader(input));
 
-			//using skip(1) to avoid the first currentLine which has the attributes names in the file
+			br.readLine(); //skips the first line to avoid the first
+                            // currentLine which has the names of the attributes in the file
             String currentLine;
 			while((currentLine = br.readLine()) != null){
                 String[] p = currentLine.split(",");// a CSV has comma separated lines
@@ -54,12 +55,17 @@ public class networkBuilder {
                 FileReader fr = new FileReader(edgesFile);
                 BufferedReader br = new BufferedReader(fr);
                 String currentLine;
+
+                br.readLine(); //skips the first line to avoid the first
+                // currentLine which has the names of the attributes in the file
+
                 //adding neighbors info from the edgesFile
                 while ((currentLine = br.readLine()) != null) {
                     String[] line = currentLine.split(",");
-                    airports.get(line[0]).addNeighbor(line[1]);
+                    Airport a;
+                    if((a = airports.get(line[0])) != null)
+                        a.addNeighbor(line[1]);
                 }
-                br.close();
             }
             catch (FileNotFoundException e) {
                 throw new FileNotFoundException("edge file not founded");

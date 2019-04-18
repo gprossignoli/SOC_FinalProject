@@ -1,3 +1,4 @@
+import Logic.Airport;
 import Logic.Context;
 import Logic.networkBuilder;
 import Logic.SimulationLogic.OverloadModel;
@@ -5,6 +6,7 @@ import Logic.SimulationLogic.PropagationModel;
 import Logic.SimulationLogic.Simulation;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class Controller {
 
@@ -15,12 +17,12 @@ public class Controller {
         this.simData = simData;
         buildNetwork(nodesPath,edgesPath);
 
-        if(simData.getType().equals("Logic.SimulationLogic.PropagationModel")){
+        if(simData.getType().equals("PropagationModel")){
             this.sim = new PropagationModel(simData.getData());
         }
 
         else if(simData.getType().equals("OverLoadModel")){
-           this.sim = new OverloadModel(simData.getData());
+         //  this.sim = new OverloadModel();
         }
 
 	}
@@ -35,12 +37,13 @@ public class Controller {
 
         else{
             System.out.println("The simulation with id: " + simData.getData().get(1) + "was executed with success");
+
         }
     }
 
 	private boolean buildNetwork(String nodesPath, String edgesPath) {
         try {
-            simData.addData(networkBuilder.read("europeNodes.csv", "europeEdges.csv"));
+            simData.addData(networkBuilder.read(nodesPath, edgesPath));
         } catch (IOException e) {
             e.printStackTrace();
             return false;

@@ -9,62 +9,78 @@ import java.util.Random;
 
 public class PropagationModel extends Simulation {
 
-    private Float threshold;
+    private Double threshold;
     private Integer initialAmountOfAffectedNodes;
 	public PropagationModel(List<Object> simData) {
-	    super((Integer) simData.get(0), (HashMap) simData.get(3));
-        this.threshold = (Float) simData.get(1);
-        this.initialAmountOfAffectedNodes = (Integer) simData.get(2);
+	    super(Integer.parseInt((String) simData.get(0)), (HashMap) simData.get(3));
+        this.threshold = Double.parseDouble((String) simData.get(1));
+        this.initialAmountOfAffectedNodes = Integer.parseInt((String) simData.get(2));
 	}
 
 	@Override
 	public boolean executeSimulation(){
-        Random random = new Random();
-        int iteration = 0;
-        ReportBuilder reportBuilder = null;
-        while (iteration++ < simIterations) {
-            reportBuilder = new ReportBuilder(threshold.toString());
-            int tries = 0;
-            super.initSimulationList();
 
-            //At time 0 fails a small number of nodes picked randomly
-            for (int i = 0; i < initialAmountOfAffectedNodes; ++i) {
-                int randomAirport = random.nextInt(airports.size());
+	    while(threshold <= 1) {
+            Random random = new Random();
+            int iteration = 0;
+            ReportBuilder reportBuilder = null;
 
-                String iata = availableAirports.get(randomAirport);
-                airports.get(iata).setLock(true);
+            while (iteration++ < simIterations) {
+                reportBuilder = new ReportBuilder(threshold.toString());
 
-                availableAirports.remove(iata);
-                downedAirports.add(iata);
+                super.initSimulationList();
+
+                setRandomFailures(random); //At time 0 fails a small number of nodes picked randomly
+
+                executeSimulationStep(random);
+
+                reportBuilder.addData(availableAirports.size(), downedAirports.size());
             }
 
+            if (reportBuilder == null) {
+                System.out.println("It was problems with the simulation with id: " + threshold);
+                return false;
+            }
+            if(!reportBuilder.buildReport())
+                return false;
 
-            Airport a;
-            //if the status of the net doesn't change in the 3 next steps then the cascade was stopped
-            while (downedAirports.size() < availableAirports.size() && tries <= 3) {
-                String iata = availableAirports.get(random.nextInt(availableAirports.size()));
+            threshold += 0.5;
+        }
+        return true;
+    }
+
+    private void setRandomFailures(Random random) {
+        for (int i = 0; i < initialAmountOfAffectedNodes; ++i) {
+            int randomAirport = random.nextInt(airports.size());
+
+            String iata = availableAirports.get(randomAirport);
+            airports.get(iata).setLock(true);
+
+            availableAirports.remove(iata);
+            downedAirports.add(iata);
+        }
+    }
+
+    private void executeSimulationStep(Random random) {
+        Airport a;
+        int tries = 0;
+
+        // if the network status doesn't change in the 3 next steps it would assume that the cascade it's stopped
+        while (downedAirports.size() < availableAirports.size() && tries <= 3) {
+            String iata = availableAirports.get(random.nextInt(availableAirports.size()));
+            a = airports.get(iata);
+            while (a.isLocked()) {
+                iata = availableAirports.get(random.nextInt(availableAirports.size()));
                 a = airports.get(iata);
-                while (a.isLocked()){
-                    iata = availableAirports.get(random.nextInt(availableAirports.size()));
-                    a = airports.get(iata);
-                }
-
-                if (!tryToLockNode(a))
-                    ++tries;
             }
 
-            reportBuilder.addData(availableAirports.size(),downedAirports.size());
+            if (!tryToLockNode(a))
+                ++tries;
         }
-
-        if (reportBuilder == null) {
-           System.out.println("It was problems with the simulation with id: " + threshold);
-           return false;
-        }
-
-        return reportBuilder.buildReport();
     }
 
     private boolean tryToLockNode(Airport a) {
+        //if the number of neighbor nodes is greater than the threshold then the current node would fail
 	    List<String> neighbors = a.getNeighbors();
 	    int neighborsDowned = 0;
 	    for(String s : neighbors){
