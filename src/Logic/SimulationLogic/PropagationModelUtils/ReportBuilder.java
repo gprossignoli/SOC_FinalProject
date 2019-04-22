@@ -46,9 +46,11 @@ public class ReportBuilder {
     private Pair<Double,Double> calculateVariance(Double availableAverage, Double downedAverage) {
         return new Pair<>(
                 (availableNodesFrequency.stream()
-                        .mapToDouble(v -> Math.pow(v,2.0)).sum()) - Math.pow(availableAverage,2.0),
+                        .mapToDouble(v -> Math.pow(v,2.0)).sum() / availableNodesFrequency.size())
+                        - Math.pow(availableAverage,2.0),
                 (downedNodesFrequency.stream()
-                        .mapToDouble(v -> Math.pow(v,2.0)).sum()) - Math.pow(downedAverage,2.0)
+                        .mapToDouble(v -> Math.pow(v,2.0)).sum() / downedNodesFrequency.size())
+                        - Math.pow(downedAverage,2.0)
         );
     }
 

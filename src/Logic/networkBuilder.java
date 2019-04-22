@@ -66,6 +66,12 @@ public class networkBuilder {
                     if((a = airports.get(line[0])) != null)
                         a.addNeighbor(line[1]);
                 }
+
+               //eliminates the isolated nodes because they just add noise to the results
+               airports = airports.entrySet()
+                       .stream()
+                       .filter(x -> x.getValue().getNeighbors().size() > 0)
+                       .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             }
             catch (FileNotFoundException e) {
                 throw new FileNotFoundException("edge file not founded");

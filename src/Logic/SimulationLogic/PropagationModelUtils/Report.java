@@ -9,38 +9,37 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 
 public class Report {
     private String id;
-    private Double availableAverage;
-    private Double availableVariance;
-    private Double availableTypicalDeviation;
-    private Double downedAverage;
-    private Double downedVariance;
-    private Double downedTypicalDeviation;
+    private String availableAverage;
+    private String availableVariance;
+    private String availableTypicalDeviation;
+    private String downedAverage;
+    private String downedVariance;
+    private String downedTypicalDeviation;
 
     public Report(Pair<Double,Double> averages,
                   Pair<Double,Double> variances,
                   Pair<Double,Double> typicalDeviations,
                   String id){
         this.id = id;
-        availableAverage = averages.getKey();
-        downedAverage = averages.getValue();
-        availableVariance = variances.getKey();
-        downedVariance = variances.getValue();
-        availableTypicalDeviation = typicalDeviations.getKey();
-        downedTypicalDeviation = typicalDeviations.getValue();
+        DecimalFormat Format = new DecimalFormat("#0.00");
+        availableAverage = Format.format(averages.getKey());
+        downedAverage = Format.format(averages.getValue());
+        availableVariance = Format.format(variances.getKey());
+        downedVariance = Format.format(variances.getValue());
+        availableTypicalDeviation = Format.format(typicalDeviations.getKey());
+        downedTypicalDeviation = Format.format(typicalDeviations.getValue());
     }
 
     public boolean writeReport(){
             String fileSeparator = System.getProperty("file.separator");
-            String relativePath = "results" + fileSeparator + "propagation_model"+
-                    fileSeparator+id+".txt";
+            String relativePath = "results" + fileSeparator + "propagation_model-"+ id +".txt";
             File file = new File(relativePath);
         try {
-            if(!file.createNewFile()){
-                throw new IOException("The results file " + id + ".txt " + "wasn't created");
-            }
+            file.createNewFile();
         } catch (IOException e) {
             return false;
         }
