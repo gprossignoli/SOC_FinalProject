@@ -14,7 +14,15 @@ public class Context {
            0 <= threshold <= 1 and will be a Double type value
         [3] -> initial amount of nodes affected, afecta directamente a la probabilidad de que se produzca una cascada;
             0 <= initialAmountOfNodesAffected <= number of nodes in the net
-
+    --For overload model:
+        [1] -> iterations to be executed
+        [2] -> Lmin
+        [3] -> Lmax  --> indicates the interval, both included,
+                         with which the initial load of each node will be calculated
+        [4] -> Lfail --> the max load that a node can support before failing
+        [5] -> D --> the load that it's going to be applied for the network in each simulation step
+        [6] -> P --> the overload that will be distributed on the rest of the network when a node fails
+                    P > 0
     */
     private List<Object> data;
     public Context(List<Object> data){

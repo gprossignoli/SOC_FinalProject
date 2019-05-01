@@ -10,7 +10,7 @@ public class Airport {
 	private String country;
 	private boolean locked;
 	private List<String> neighbors;
-	private float load;
+	private Double load;
 
     public Airport(){
         neighbors = new ArrayList<String>();
@@ -18,7 +18,7 @@ public class Airport {
     }
 
 	public Airport(String label, String Icao, String Iata,
-                   String country, boolean locked, List<String> neighbors, float load){
+                   String country, boolean locked, List<String> neighbors, Double load){
 	    this.label = label;
 	    this.Icao = Icao;
 	    this.Iata = Iata;
@@ -56,11 +56,11 @@ public class Airport {
 		neighbors.add(a);
 	}
 	
-	public void setLoad(float load){
+	public void setLoad(Double load){
 		this.load = load;
 	}
 	
-	public float getLoad(){
+	public Double getLoad(){
 		return this.load;
 	}
 

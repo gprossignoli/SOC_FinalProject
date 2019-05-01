@@ -4,6 +4,7 @@ import Logic.Airport;
 import Logic.SimulationLogic.PropagationModelUtils.ReportBuilder;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -11,10 +12,15 @@ import java.util.Random;
 public class PropagationModel extends Simulation {
     private Double threshold;
     private Integer initialAmountOfAffectedNodes;
-	public PropagationModel(List<Object> simData) {
+    private List<String> availableAirports;
+    private List<String> downedAirports;
+
+    public PropagationModel(List<Object> simData) {
 	    super(Integer.parseInt((String) simData.get(0)), (HashMap) simData.get(3));
         this.threshold = Double.parseDouble((String) simData.get(1));
         this.initialAmountOfAffectedNodes = Integer.parseInt((String) simData.get(2));
+        this.availableAirports = new ArrayList<>();
+        this.downedAirports = new ArrayList<>();
 	}
 
 	@Override
@@ -28,7 +34,7 @@ public class PropagationModel extends Simulation {
             reportBuilder = new ReportBuilder(thresholdFormat.format(threshold));
 
             while (iteration++ < simIterations) {
-                super.initSimulationList();
+                initSimulationList();
 
                 setRandomFailures(random); //At time 0 fails a small number of nodes picked randomly
 
@@ -36,7 +42,7 @@ public class PropagationModel extends Simulation {
                 int tries = 0;
 
                 // if the network status doesn't change in the 3 next steps it would assume that the cascade it's stopped
-                while (downedAirports.size() < availableAirports.size() && tries <= 3) {
+                while (downedAirports.size() < availableAirports.size() && tries < 3) {
                     String iata = availableAirports.get(random.nextInt(availableAirports.size()));
                     a = airports.get(iata);
                     while (a.isLocked()) {
@@ -63,6 +69,10 @@ public class PropagationModel extends Simulation {
         }
 
         return true;
+    }
+    private void initSimulationList() {
+        airports.forEach((k,v) -> availableAirports.add(k));
+        downedAirports.clear();
     }
 
     private void setRandomFailures(Random random) {
