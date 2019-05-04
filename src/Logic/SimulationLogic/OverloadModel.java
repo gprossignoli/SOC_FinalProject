@@ -1,6 +1,7 @@
 package Logic.SimulationLogic;
 
 import Logic.Airport;
+import Logic.SimulationLogic.OverloadModelUtils.Report;
 import javafx.util.Pair;
 
 import java.io.IOException;
@@ -17,26 +18,25 @@ public class OverloadModel extends Simulation {
     private List<String> downedAirports;
 
     public OverloadModel(List<Object> data) {
-        super((Integer)data.get(0), (Map<String, Airport>) data.get(6));
-        this.initalLoadInterval = new Pair<>(Double.parseDouble((String) data.get(1)),
-                Double.parseDouble((String) data.get(2)));
-        this.Lfail = (Double) data.get(3);
-        this.D = (Double) data.get(4);
-        this.P = (Double) data.get(5);
+        super(1, (Map<String, Airport>) data.get(5));
+        this.initalLoadInterval = new Pair<>(Double.parseDouble((String) data.get(0)),
+                Double.parseDouble((String) data.get(1)));
+        this.Lfail = (Double) data.get(2);
+        this.D = (Double) data.get(3);
+        this.P = (Double) data.get(4);
         this.availableAirports = new HashMap<>();
         this.downedAirports = new ArrayList<>();
     }
 
     @Override
     public boolean executeSimulation() {
-        int iteration = 0;
-        while(iteration++ < this.simIterations){
             initSimulationList();
 
             setInitialLoad();
             applyOverload();
 
             int tries = 0;
+            Report report = new Report();
             // if the network status doesn't change in the 3 next steps it would assume that the cascade it's stopped
             while (downedAirports.size() < availableAirports.size() && tries < 3) {
                 int initialDownedAirportsSize = downedAirports.size();
@@ -50,10 +50,11 @@ public class OverloadModel extends Simulation {
                 );
                 if(initialDownedAirportsSize == downedAirports.size())
                     tries++;
+                else
+                    report.addData(downedAirports.size() - initialDownedAirportsSize);
             }
-        }
 
-        return true;
+        return report.writeReport();
     }
 
     private void initSimulationList() {
