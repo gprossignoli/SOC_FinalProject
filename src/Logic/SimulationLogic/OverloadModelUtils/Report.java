@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Report {
     private List<Integer> downedNodesPerIteration;
@@ -26,11 +27,11 @@ public class Report {
         return out;
     }
 
-    public boolean writeReport(){
+    public boolean writeReport(String name){
 
 
         String fileSeparator = System.getProperty("file.separator");
-        String relativePath = "results" + fileSeparator + "overload_model.txt";
+        String relativePath = "results_"+ name + fileSeparator + "overload_model.txt";
         File file = new File(relativePath);
         try {
             file.createNewFile();

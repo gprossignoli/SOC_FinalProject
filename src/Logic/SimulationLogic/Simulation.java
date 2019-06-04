@@ -2,8 +2,6 @@ package Logic.SimulationLogic;
 
 import Logic.Airport;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public abstract class Simulation {

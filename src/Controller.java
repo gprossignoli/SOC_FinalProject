@@ -22,7 +22,7 @@ public class Controller {
         }
 
         else if(simData.getType().equals("OverLoadModel")){
-         //  this.sim = new OverloadModel();
+            this.sim = new OverloadModel(simData.getData());
         }
 
 	}
