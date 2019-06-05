@@ -26,8 +26,8 @@ public class PropagationModel extends Simulation {
 	@Override
 	public boolean executeSimulation(){
         DecimalFormat thresholdFormat = new DecimalFormat("#0.00");
+        ReportBuilder reportBuilder = null;
 	    while(threshold <= 1) {
-            ReportBuilder reportBuilder = null;
             Random random = new Random();
             int iteration = 0;
 
@@ -68,6 +68,9 @@ public class PropagationModel extends Simulation {
             threshold += 0.05;
         }
 
+        if(!reportBuilder.buildHistogram())
+            return false;
+
         return true;
     }
     private void initSimulationList() {
@@ -77,7 +80,7 @@ public class PropagationModel extends Simulation {
 
     private void setRandomFailures(Random random) {
         for (int i = 0; i < initialAmountOfAffectedNodes; ++i) {
-            int randomAirport = random.nextInt(airports.size());
+            int randomAirport = random.nextInt(availableAirports.size());
 
             String iata = availableAirports.get(randomAirport);
             airports.get(iata).setLock(true);

@@ -30,7 +30,11 @@ public class Controller {
     public void initSimulation(){
 	    if(!sim.executeSimulation()){
 	        if(!sim.executeSimulation())
-	            System.out.println("The simulation with id: " + simData.getData().get(1) + "was impossible to execute");
+	            if(simData.getType().equals("PropagationModel"))
+	                System.out.println("The simulation with id: "
+                            + simData.getData().get(1) + "was impossible to execute");
+	            else
+                    System.out.println("The Overload model simulation was impossible to execute");
 	        else
                 System.out.println("The simulation with id: " + simData.getData().get(1) + "was executed with success");
         }

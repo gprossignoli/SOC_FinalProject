@@ -24,12 +24,12 @@ public class OverloadModel extends Simulation {
         super(1, (Map<String, Airport>) data.get(5));
         this.initalLoadInterval = new Pair<>(Double.parseDouble((String) data.get(0)),
                 Double.parseDouble((String) data.get(1)));
-        this.Lfail = (Double) data.get(2);
-        this.D = (Double) data.get(3);
-        this.P = (Double) data.get(4);
+        this.Lfail = Double.parseDouble((String) data.get(2));
+        this.D = Double.parseDouble((String) data.get(3));
+        this.P = Double.parseDouble((String) data.get(4));
         this.availableAirportsModeA = new HashMap<>();
-        this.downedAirportsModeB = new ArrayList<>();
-        this.availableAirportsModeA = new HashMap<>();
+        this.downedAirportsModeA = new ArrayList<>();
+        this.availableAirportsModeB = new HashMap<>();
         this.downedAirportsModeB = new ArrayList<>();
     }
 
@@ -86,7 +86,6 @@ public class OverloadModel extends Simulation {
     private void initSimulationList() {
         airports.forEach((k,v) -> availableAirportsModeA.put(k,0.0));
         downedAirportsModeA.clear();
-        airports.forEach((k,v) -> availableAirportsModeB.put(k,0.0));
         downedAirportsModeB.clear();
     }
 

@@ -10,6 +10,7 @@ public class ReportBuilder {
     private List<Integer> availableNodesFrequency;
     private List<Integer> downedNodesFrequency;
     private String reportId;
+    private Histogram hist;
 
     public ReportBuilder(String reportId){
         availableNodesFrequency = new ArrayList<>();
@@ -27,7 +28,12 @@ public class ReportBuilder {
         Pair<Double,Double> variances = calculateVariance(averages.getKey(),averages.getValue());
         Pair<Double,Double> typicalDeviations = calculateTypicalDeviation(variances.getKey(),variances.getValue());
         Report report = new Report(averages, variances, typicalDeviations,reportId);
+        hist = new Histogram(downedNodesFrequency.size());
+        hist.addData(averages.getValue());
         return report.writeReport();
+    }
+    public boolean buildHistogram(){
+        return hist.buildHistogram();
     }
 
     private Pair<Double,Double> calculateAverages(){

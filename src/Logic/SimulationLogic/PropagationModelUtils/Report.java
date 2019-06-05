@@ -36,8 +36,20 @@ public class Report {
 
     public boolean writeReport(){
             String fileSeparator = System.getProperty("file.separator");
-            String relativePath = "results" + fileSeparator + "propagation_model-"+ id +".txt";
-            File file = new File(relativePath);
+        //first checks if the directories already exists
+        String relativePath = "results";
+        File file = new File(relativePath);
+        if(!file.exists())
+            if(!file.mkdir())
+                return false;
+        relativePath += fileSeparator + "propagationModel";
+        file = new File(relativePath);
+        if(!file.exists())
+            if(!file.mkdir())
+                return false;
+        relativePath += fileSeparator + "propagation_model-"+ id +".txt";
+        file = new File(relativePath);
+        //creates the file
         try {
             file.createNewFile();
         } catch (IOException e) {

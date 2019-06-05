@@ -31,8 +31,21 @@ public class Report {
 
 
         String fileSeparator = System.getProperty("file.separator");
-        String relativePath = "results_"+ name + fileSeparator + "overload_model.txt";
+        //first checks if the directories already exists
+        String relativePath = "results";
         File file = new File(relativePath);
+        if(!file.exists())
+            if(!file.mkdir())
+                return false;
+        relativePath += fileSeparator + "overloadModel";
+        file = new File(relativePath);
+        if(!file.exists())
+            if(!file.mkdir())
+                return false;
+        relativePath += fileSeparator + "overload_model_" + name +
+                ".txt";
+        file = new File(relativePath);
+        //creates the file
         try {
             file.createNewFile();
         } catch (IOException e) {
