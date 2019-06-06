@@ -1,6 +1,7 @@
 package Logic.SimulationLogic;
 
 import Logic.Airport;
+import Logic.SimulationLogic.PropagationModelUtils.Histogram;
 import Logic.SimulationLogic.PropagationModelUtils.ReportBuilder;
 
 import java.text.DecimalFormat;
@@ -27,6 +28,7 @@ public class PropagationModel extends Simulation {
 	public boolean executeSimulation(){
         DecimalFormat thresholdFormat = new DecimalFormat("#0.00");
         ReportBuilder reportBuilder = null;
+        Histogram hist = new Histogram();
 	    while(threshold <= 1) {
             Random random = new Random();
             int iteration = 0;
@@ -74,8 +76,12 @@ public class PropagationModel extends Simulation {
         return true;
     }
     private void initSimulationList() {
-        airports.forEach((k,v) -> availableAirports.add(k));
         downedAirports.clear();
+        availableAirports.clear();
+        airports.forEach((k,v) -> {
+            airports.get(k).setLock(false);
+            availableAirports.add(k);
+        });
     }
 
     private void setRandomFailures(Random random) {

@@ -6,6 +6,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
+import org.jfree.data.xy.XYBarDataset;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,25 +14,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Histogram {
-    private double[] data;
-    private int indexOfData;
+    private List<Double> downedNodesFrequency;
+    private List<Double> thresholds;
 
-    public Histogram(int size){
-        data = new double[size];
-        indexOfData = 0;
+    public Histogram(){
+        downedNodesFrequency = new ArrayList<>();
+        thresholds = new ArrayList<>();
     }
 
-    public void addData(Double r){
-        if(indexOfData > data.length)
-            throw new ArrayIndexOutOfBoundsException("Error en reportBuilder, demasiados datos?");
-        data[indexOfData] = r;
-        indexOfData++;
+    public void addData(Double frequency, Double threshold){
+        downedNodesFrequency.add(frequency);
+        thresholds.add(threshold);
     };
 
+    private double[] prepareAxis(List<Double> list){
+        int lenght = list.size();
+        double[] ret = new double[lenght];
+        for(int i = 0; i < lenght; i++){
+            ret[i] = list.get(i);
+        }
+
+        return ret;
+    }
+
+
     public boolean buildHistogram(){
-        HistogramDataset dataset = new HistogramDataset();
-        dataset.setType(HistogramType.FREQUENCY);
-        dataset.addSeries("Cascade Distribution",data,data.length);
+        XYBarDataset dataset = new XYBarDataset();
+        dataset.s
+        double[] frequencies = prepareAxis(downedNodesFrequency);
+        double[] classes = prepareAxis(thresholds);
+        dataset.addSeries("Cascade Distribution",frequencies,classes);
+        dataset.
         String plotTitle = "Cascade Distribution";
         String xAxis = "failure threshold";
         String yAxis = "Downed nodes frequency";

@@ -1,5 +1,5 @@
-/out/
-/.gitattributes
-/SOC_FinalProject.iml
-/External Libraries/
-/.idea/
+out
+.gitattributes
+SOC_FinalProject.iml
+External Libraries
+.idea

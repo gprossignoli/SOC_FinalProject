@@ -16,6 +16,7 @@ public class ReportBuilder {
         availableNodesFrequency = new ArrayList<>();
         downedNodesFrequency = new ArrayList<>();
         this.reportId = reportId;
+        this.hist = new Histogram();
     }
 
     public void addData(Integer availableNodes, Integer downedNodes){
@@ -24,14 +25,15 @@ public class ReportBuilder {
     }
 
     public boolean buildReport(){
+        //key = availableNodes, value = downedNodes
         Pair<Double,Double> averages = calculateAverages();
         Pair<Double,Double> variances = calculateVariance(averages.getKey(),averages.getValue());
         Pair<Double,Double> typicalDeviations = calculateTypicalDeviation(variances.getKey(),variances.getValue());
         Report report = new Report(averages, variances, typicalDeviations,reportId);
-        hist = new Histogram(downedNodesFrequency.size());
         hist.addData(averages.getValue());
         return report.writeReport();
     }
+
     public boolean buildHistogram(){
         return hist.buildHistogram();
     }
