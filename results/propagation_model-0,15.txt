@@ -1,9 +1,0 @@
-The simulation has the following results: 
---Available nodes: 
-   Average: 5796,80
-   Variance: 826383,76
-   Typical Deviation: 909,06
---Downed nodes: 
-   Average: 10,20
-   Variance: 0,16
-   Typical Deviation: 0,40

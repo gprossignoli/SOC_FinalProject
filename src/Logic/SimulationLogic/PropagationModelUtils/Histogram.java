@@ -4,17 +4,20 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
 import org.jfree.data.xy.XYBarDataset;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Histogram {
-    private List<Double> downedNodesFrequency;
+    private List<Integer> downedNodesFrequency;
     private List<Double> thresholds;
 
     public Histogram(){
@@ -22,10 +25,12 @@ public class Histogram {
         thresholds = new ArrayList<>();
     }
 
-    public void addData(Double frequency, Double threshold){
+    public void addFrequency(Integer frequency){
         downedNodesFrequency.add(frequency);
+    }
+    public void addThreshold(Double threshold){
         thresholds.add(threshold);
-    };
+    }
 
     private double[] prepareAxis(List<Double> list){
         int lenght = list.size();
@@ -39,24 +44,16 @@ public class Histogram {
 
 
     public boolean buildHistogram(){
-        XYBarDataset dataset = new XYBarDataset();
-        dataset.s
-        double[] frequencies = prepareAxis(downedNodesFrequency);
-        double[] classes = prepareAxis(thresholds);
-        dataset.addSeries("Cascade Distribution",frequencies,classes);
-        dataset.
-        String plotTitle = "Cascade Distribution";
-        String xAxis = "failure threshold";
-        String yAxis = "Downed nodes frequency";
-        PlotOrientation orientation = PlotOrientation.VERTICAL;
-        boolean show = false;
-        boolean toolTips = false;
-        boolean urls = false;
+        CategoryDataset dataset = createDataset();
 
-        JFreeChart chart = ChartFactory.createHistogram(plotTitle,xAxis,yAxis,dataset,orientation,
-                show,toolTips,urls);
-        int width = 500;
-        int height = 300;
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Cascades Distribution",
+                "threshold",
+                "downed nodes frequency",
+                dataset,
+                PlotOrientation.VERTICAL,
+                false,false,false);
+
         try{
             String fileSeparator = System.getProperty("file.separator");
             String relativePath = "results";
@@ -69,15 +66,26 @@ public class Histogram {
             if(!file.exists())
                 if(!file.mkdir())
                     return false;
-            relativePath += fileSeparator + "propagation_model_Histogram.JPEG";
+            relativePath += fileSeparator + "propagation_model_Histogram.PNG";
             file = new File(relativePath);
             //creates the file
-            ChartUtils.saveChartAsJPEG(file,chart,width,height);
+            ChartUtils.saveChartAsPNG(file,chart,800,300);
         }
         catch (IOException e){
             return false;
         }
 
         return true;
+    }
+
+    private CategoryDataset createDataset() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        DecimalFormat thresholdFormat = new DecimalFormat("#0.00");
+        for(int i = 0; i < thresholds.size(); i++){
+            dataset.addValue(downedNodesFrequency.get(i),"",thresholdFormat.format(thresholds.get(i)));
+        }
+
+        return dataset;
     }
 }

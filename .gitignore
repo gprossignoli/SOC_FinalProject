@@ -1,5 +1,5 @@
-out
+out/
 .gitattributes
 SOC_FinalProject.iml
-External Libraries
+External Libraries/
 .idea
