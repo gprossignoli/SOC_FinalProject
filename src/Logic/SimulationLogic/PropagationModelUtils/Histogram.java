@@ -19,14 +19,15 @@ import java.util.List;
 public class Histogram {
     private List<Integer> downedNodesFrequency;
     private List<Double> thresholds;
-
-    public Histogram(){
+    private int initialAmountAffectedNodes;
+    public Histogram(int initialAmountAffectedNodes){
         downedNodesFrequency = new ArrayList<>();
         thresholds = new ArrayList<>();
+        this.initialAmountAffectedNodes = initialAmountAffectedNodes;
     }
 
     public void addFrequency(Integer frequency){
-        downedNodesFrequency.add(frequency);
+        downedNodesFrequency.add(frequency - initialAmountAffectedNodes);
     }
     public void addThreshold(Double threshold){
         thresholds.add(threshold);

@@ -70,10 +70,9 @@ public class Report {
         return "The simulation has the following results: \n" +
                 "--Available nodes: \n" +
                 "   Average: " + availableAverage + "\n" +
-                "   Variance: " + availableVariance + "\n" +
-                "   Typical Deviation: " + availableTypicalDeviation +"\n"+
                 "--Downed nodes: \n" +
                 "   Average: " + downedAverage + "\n" +
+                "--Dispersion metrics: \n" +
                 "   Variance: " + downedVariance + "\n" +
                 "   Typical Deviation: " + downedTypicalDeviation;
     }

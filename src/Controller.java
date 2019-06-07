@@ -47,7 +47,8 @@ public class Controller {
 
 	private boolean buildNetwork(String nodesPath, String edgesPath) {
         try {
-            simData.addData(networkBuilder.read(nodesPath, edgesPath));
+            Map<String,Airport> map = networkBuilder.read(nodesPath, edgesPath);
+            simData.addData(map);
         } catch (IOException e) {
             e.printStackTrace();
             return false;

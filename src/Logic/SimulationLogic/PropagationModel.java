@@ -27,7 +27,7 @@ public class PropagationModel extends Simulation {
 	public boolean executeSimulation(){
 
         ReportBuilder reportBuilder = null;
-        Histogram hist = new Histogram();
+        Histogram hist = new Histogram(initialAmountOfAffectedNodes);
 	    while(threshold <= 1) {
             Random random = new Random();
             int iteration = 0;
@@ -46,18 +46,18 @@ public class PropagationModel extends Simulation {
                 while (availableAirports.size() > 0 && tries < 3) {
                     String iata = availableAirports.get(random.nextInt(availableAirports.size()));
                     a = airports.get(iata);
-                    
+
                     if (!tryToLockNode(a))
                         ++tries;
                 }
 
                 reportBuilder.addData(availableAirports.size(),
-                        downedAirports.size() - initialAmountOfAffectedNodes);
-                iteration++;
+                        downedAirports.size());
+             iteration++;
             }
 
             if(!reportBuilder.buildReport(hist))
-                return false;
+            return false;
             hist.addThreshold(threshold);
 
             threshold += 0.05;

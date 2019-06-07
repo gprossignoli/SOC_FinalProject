@@ -2,9 +2,11 @@ package Logic.SimulationLogic;
 
 import Logic.Airport;
 import Logic.SimulationLogic.OverloadModelUtils.Report;
+import Logic.SimulationLogic.OverloadModelUtils.XYChart_Report;
 import javafx.util.Pair;
 
 import java.util.*;
+import java.util.stream.DoubleStream;
 
 //We want to compare the results for the execution in two ways,
 // first distributing the overload between the entire network,
@@ -43,63 +45,79 @@ public class OverloadModel extends Simulation {
             int tries = 0;
             Report reportA = new Report();
             Report reportB = new Report();
+            XYChart_Report XYReportA = new XYChart_Report();
+            XYChart_Report XYReportB = new XYChart_Report();
 
             //Mode A
             // if the network status doesn't change in the 3 next steps it would assume that the cascade it's stopped
-            while (downedAirportsModeA.size() < availableAirportsModeA.size() && tries < 3) {
+            while (availableAirportsModeA.size() > 0 && tries < 3) {
                 int initialDownedAirportsSize = downedAirportsModeA.size();
                 availableAirportsModeA.forEach((k,v) -> {
-                        if(v > Lfail) {
+                        if(v > Lfail && !airports.get(k).isLocked()) {
                          downedAirportsModeA.add(k);
-                         availableAirportsModeA.remove(k);
+                         airports.get(k).setLock(true);
                          redistributeLoad();
                         }
                     }
                 );
                 if(initialDownedAirportsSize == downedAirportsModeA.size())
                     tries++;
-                else
+                else {
                     reportA.addData(downedAirportsModeA.size() - initialDownedAirportsSize);
+                    XYReportA.addData(downedAirportsModeA.size() - initialDownedAirportsSize);
+                }
             }
 
             //Mode B
             // if the network status doesn't change in the 3 next steps it would assume that the cascade it's stopped
-            while (downedAirportsModeA.size() < availableAirportsModeB.size() && tries < 3) {
+            tries = 0;
+            airports.forEach((k,v) -> v.setLock(false));
+            while (availableAirportsModeB.size() > 0 && tries < 3) {
                 int initialDownedAirportsSize = downedAirportsModeB.size();
                 availableAirportsModeB.forEach((k,v) -> {
-                            if(v > Lfail) {
+                            if(v > Lfail && !airports.get(k).isLocked()) {
                                 downedAirportsModeB.add(k);
-                                availableAirportsModeB.remove(k);
-                                redistributeLoad(k);
+                              Airport a = airports.get(k);
+                              a.setLock(true);
+                              a.getNeighbors().forEach((n)->redistributeLoad(n));
                             }
                         }
                 );
                 if(initialDownedAirportsSize == downedAirportsModeB.size())
                     tries++;
-                else
+                else {
                     reportB.addData(downedAirportsModeB.size() - initialDownedAirportsSize);
+                    XYReportB.addData(downedAirportsModeB.size() - initialDownedAirportsSize);
+                }
             }
 
-        return reportA.writeReport("ModelA") && reportB.writeReport("ModelB");
+        return reportA.writeReport("ModelA") && reportB.writeReport("ModelB")
+                && XYReportA.buildChart("A") && XYReportB.buildChart("B");
     }
 
     private void initSimulationList() {
-        airports.forEach((k,v) -> availableAirportsModeA.put(k,0.0));
+        airports.forEach((k,v) -> {
+            if(airports.containsKey("KZI"))
+                System.out.println("send help");
+            availableAirportsModeA.put(k,0.0);
+            availableAirportsModeB.put(k,0.0);
+        });
         downedAirportsModeA.clear();
         downedAirportsModeB.clear();
     }
 
     private void setInitialLoad() {
         Random Linit = new Random();
-
-        availableAirportsModeA.forEach((k,v)-> availableAirportsModeA.replace(k,
-                Linit.nextDouble()*
-                (initalLoadInterval.getValue() - initalLoadInterval.getKey())
-                + initalLoadInterval.getKey()));
-        availableAirportsModeB.forEach((k,v)-> availableAirportsModeB.replace(k,
-                Linit.nextDouble()*
-                (initalLoadInterval.getValue() - initalLoadInterval.getKey())
-                + initalLoadInterval.getKey()));
+        availableAirportsModeA.forEach((k,v)->
+            availableAirportsModeA.replace(k,
+                    initalLoadInterval.getValue()
+                            + (initalLoadInterval.getKey() - initalLoadInterval.getValue())
+                            * Linit.nextDouble()));
+        availableAirportsModeB.forEach((k,v)->
+            availableAirportsModeB.replace(k,
+                    initalLoadInterval.getValue()
+                            + (initalLoadInterval.getKey() - initalLoadInterval.getValue())
+                            * Linit.nextDouble()));
     }
 
     private void applyOverload() {
@@ -108,11 +126,16 @@ public class OverloadModel extends Simulation {
     }
 
     private void redistributeLoad(){
-        availableAirportsModeA.forEach((k,v)->availableAirportsModeA.replace(k, v + P));
+        availableAirportsModeA.forEach((k,v)->{
+            if(!airports.get(k).isLocked())
+                availableAirportsModeA.replace(k, v + P);
+        });
     }
 
     private void redistributeLoad(String downedNodeKey){
+        if (!airports.get(downedNodeKey).isLocked())
             availableAirportsModeB.replace(downedNodeKey,
                     availableAirportsModeB.get(downedNodeKey) + P);
+
     }
 }

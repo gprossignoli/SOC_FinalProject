@@ -1,6 +1,7 @@
 package Logic;
 
 import javafx.util.Pair;
+import jdk.nashorn.internal.runtime.Scope;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,6 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,23 +65,45 @@ public class networkBuilder {
                 while ((currentLine = br.readLine()) != null) {
                     String[] line = currentLine.split(",");
                     Airport a;
+
                     if((a = airports.get(line[0])) != null)
                         a.addNeighbor(line[1]);
                 }
 
-               //eliminates the isolated nodes because they just add noise to the results
-               airports = airports.entrySet()
-                       .stream()
-                       .filter(x -> x.getValue().getNeighbors().size() > 0)
-                       .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            }
+               //about to eliminate the isolated nodes because they just add noise to the results
+
+                //first locate the isolated nodes
+               List<String> toRemove = new ArrayList<>();
+                airports.forEach((k,v) -> {
+                   if(v.getNeighbors().size() == 0)
+                       toRemove.add(k);
+               });
+
+                //find for all nodes if any of his neighbors is about to be removed and takes it out
+                List<String> neighborsToRemove = new ArrayList<>();
+                airports.forEach((k,v)->{
+                    if(!toRemove.contains(k)){
+                        v.getNeighbors().forEach((n)-> {
+                            if (toRemove.contains(n))
+                                neighborsToRemove.add(n);
+                        });
+                    }
+                    v.removeNeighbors(neighborsToRemove);
+                });
+
+                //removes the isolated nodes
+                return airports.entrySet()
+                        .stream()
+                        .filter(x -> !toRemove.contains(x.getKey()))
+                        .collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue));
+
+			}
             catch (FileNotFoundException e) {
                 throw new FileNotFoundException("edge file not founded");
 			}
             catch (IOException e){
                 throw new IOException("problems with edge file");
             }
-		return airports;
 	}
 	
 

@@ -10,7 +10,7 @@ public class Airport {
 	private String country;
 	private boolean locked;
 	private List<String> neighbors;
-	private Double load;
+
 
     public Airport(){
         neighbors = new ArrayList<String>();
@@ -25,7 +25,6 @@ public class Airport {
 	    this.country = country;
 	    this.locked = locked;
 	    this.neighbors = neighbors;
-	    this.load = load;
     }
 
 	public void setLabel(String a){
@@ -55,14 +54,6 @@ public class Airport {
 	public void addNeighbor(String a){
 		neighbors.add(a);
 	}
-	
-	public void setLoad(Double load){
-		this.load = load;
-	}
-	
-	public Double getLoad(){
-		return this.load;
-	}
 
     public boolean isLocked() {
         return this.locked;
@@ -70,5 +61,9 @@ public class Airport {
 
     public List<String> getNeighbors() {
         return neighbors;
+    }
+
+    public void removeNeighbors(List<String> neighborsToRemove) {
+        neighborsToRemove.forEach((elem) -> neighbors.remove(elem));
     }
 }

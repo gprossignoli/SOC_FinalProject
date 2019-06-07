@@ -11,14 +11,12 @@ public class ReportBuilder {
     private List<Integer> availableNodesFrequency;
     private List<Integer> downedNodesFrequency;
     private String reportId;
-    private Histogram hist;
 
     public ReportBuilder(Double threshold){
         DecimalFormat thresholdFormat = new DecimalFormat("#0.00");
         availableNodesFrequency = new ArrayList<>();
         downedNodesFrequency = new ArrayList<>();
         this.reportId = thresholdFormat.format(threshold);
-        this.hist = new Histogram();
     }
 
     public void addData(Integer availableNodes, Integer downedNodes){
