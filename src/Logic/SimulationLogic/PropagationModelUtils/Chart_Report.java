@@ -16,11 +16,11 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Histogram {
+public class Chart_Report {
     private List<Integer> downedNodesFrequency;
     private List<Double> thresholds;
     private int initialAmountAffectedNodes;
-    public Histogram(int initialAmountAffectedNodes){
+    public Chart_Report(int initialAmountAffectedNodes){
         downedNodesFrequency = new ArrayList<>();
         thresholds = new ArrayList<>();
         this.initialAmountAffectedNodes = initialAmountAffectedNodes;

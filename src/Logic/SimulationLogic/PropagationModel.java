@@ -1,12 +1,9 @@
 package Logic.SimulationLogic;
 
 import Logic.Airport;
-import Logic.SimulationLogic.PropagationModelUtils.Histogram;
+import Logic.SimulationLogic.PropagationModelUtils.Chart_Report;
 import Logic.SimulationLogic.PropagationModelUtils.ReportBuilder;
 
-import java.text.DecimalFormat;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 
 public class PropagationModel extends Simulation {
@@ -27,7 +24,7 @@ public class PropagationModel extends Simulation {
 	public boolean executeSimulation(){
 
         ReportBuilder reportBuilder = null;
-        Histogram hist = new Histogram(initialAmountOfAffectedNodes);
+        Chart_Report hist = new Chart_Report(initialAmountOfAffectedNodes);
 	    while(threshold <= 1) {
             Random random = new Random();
             int iteration = 0;

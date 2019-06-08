@@ -2,11 +2,10 @@ package Logic.SimulationLogic;
 
 import Logic.Airport;
 import Logic.SimulationLogic.OverloadModelUtils.Report;
-import Logic.SimulationLogic.OverloadModelUtils.XYChart_Report;
+import Logic.SimulationLogic.OverloadModelUtils.Chart_Report;
 import javafx.util.Pair;
 
 import java.util.*;
-import java.util.stream.DoubleStream;
 
 //We want to compare the results for the execution in two ways,
 // first distributing the overload between the entire network,
@@ -45,8 +44,8 @@ public class OverloadModel extends Simulation {
             int tries = 0;
             Report reportA = new Report();
             Report reportB = new Report();
-            XYChart_Report XYReportA = new XYChart_Report();
-            XYChart_Report XYReportB = new XYChart_Report();
+            Chart_Report XYReport = new Chart_Report();
+
 
             //Mode A
             // if the network status doesn't change in the 3 next steps it would assume that the cascade it's stopped
@@ -64,7 +63,7 @@ public class OverloadModel extends Simulation {
                     tries++;
                 else {
                     reportA.addData(downedAirportsModeA.size() - initialDownedAirportsSize);
-                    XYReportA.addData(downedAirportsModeA.size() - initialDownedAirportsSize);
+                    XYReport.addData(downedAirportsModeA.size() - initialDownedAirportsSize,"A");
                 }
             }
 
@@ -87,18 +86,16 @@ public class OverloadModel extends Simulation {
                     tries++;
                 else {
                     reportB.addData(downedAirportsModeB.size() - initialDownedAirportsSize);
-                    XYReportB.addData(downedAirportsModeB.size() - initialDownedAirportsSize);
+                    XYReport.addData(downedAirportsModeB.size() - initialDownedAirportsSize,"B");
                 }
             }
 
         return reportA.writeReport("ModelA") && reportB.writeReport("ModelB")
-                && XYReportA.buildChart("A") && XYReportB.buildChart("B");
+                && XYReport.buildChart();
     }
 
     private void initSimulationList() {
         airports.forEach((k,v) -> {
-            if(airports.containsKey("KZI"))
-                System.out.println("send help");
             availableAirportsModeA.put(k,0.0);
             availableAirportsModeB.put(k,0.0);
         });

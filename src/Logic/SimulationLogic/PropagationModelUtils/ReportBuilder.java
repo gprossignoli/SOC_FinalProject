@@ -24,7 +24,7 @@ public class ReportBuilder {
         downedNodesFrequency.add(downedNodes);
     }
 
-    public boolean buildReport(Histogram hist){
+    public boolean buildReport(Chart_Report hist){
         //key = availableNodes, value = downedNodes
         Pair<Double,Double> averages = calculateAverages();
         Pair<Double,Double> variances = calculateVariance(averages.getKey(),averages.getValue());
