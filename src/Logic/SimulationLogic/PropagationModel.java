@@ -11,20 +11,21 @@ public class PropagationModel extends Simulation {
     private Integer initialAmountOfAffectedNodes;
     private List<String> availableAirports;
     private List<String> downedAirports;
-
+    private Integer totalNodesInNetwork;
     public PropagationModel(List<Object> simData) {
 	    super(Integer.parseInt((String) simData.get(0)), (HashMap) simData.get(3));
         this.threshold = Double.parseDouble((String) simData.get(1));
         this.initialAmountOfAffectedNodes = Integer.parseInt((String) simData.get(2));
         this.availableAirports = new ArrayList<>();
         this.downedAirports = new ArrayList<>();
+        this.totalNodesInNetwork = airports.size();
 	}
 
 	@Override
 	public boolean executeSimulation(){
 
         ReportBuilder reportBuilder = null;
-        Chart_Report hist = new Chart_Report(initialAmountOfAffectedNodes);
+        Chart_Report chart = new Chart_Report();
 	    while(threshold <= 1) {
             Random random = new Random();
             int iteration = 0;
@@ -48,20 +49,26 @@ public class PropagationModel extends Simulation {
                         ++tries;
                 }
 
-                reportBuilder.addData(availableAirports.size(),
-                        downedAirports.size());
+
+                final Integer nAvailableNodes = availableAirports.size();
+                final Integer nDownedNodes = downedAirports.size();
+
+                Double availableNodesFrequency = (nAvailableNodes.doubleValue()/totalNodesInNetwork.doubleValue());
+                Double downedNodesFrequency = nDownedNodes.doubleValue()/totalNodesInNetwork.doubleValue();
+
+                reportBuilder.addData(availableNodesFrequency
+                        ,downedNodesFrequency);
              iteration++;
             }
 
-            if(!reportBuilder.buildReport(hist))
+            if(!reportBuilder.buildReport(chart))
             return false;
-            hist.addThreshold(threshold);
 
             threshold += 0.05;
 
         }
 
-        if(!hist.buildHistogram())
+        if(!chart.buildBoxPlot())
             return false;
 
         return true;

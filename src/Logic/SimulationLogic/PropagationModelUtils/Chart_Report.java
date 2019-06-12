@@ -6,54 +6,35 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.statistics.HistogramDataset;
-import org.jfree.data.statistics.HistogramType;
+import org.jfree.data.statistics.*;
 import org.jfree.data.xy.XYBarDataset;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Chart_Report {
-    private List<Integer> downedNodesFrequency;
-    private List<Double> thresholds;
-    private int initialAmountAffectedNodes;
-    public Chart_Report(int initialAmountAffectedNodes){
-        downedNodesFrequency = new ArrayList<>();
-        thresholds = new ArrayList<>();
-        this.initialAmountAffectedNodes = initialAmountAffectedNodes;
-    }
+    private Map<Double,List<Double>> data;
 
-    public void addFrequency(Integer frequency){
-        downedNodesFrequency.add(frequency - initialAmountAffectedNodes);
-    }
-    public void addThreshold(Double threshold){
-        thresholds.add(threshold);
-    }
-
-    private double[] prepareAxis(List<Double> list){
-        int lenght = list.size();
-        double[] ret = new double[lenght];
-        for(int i = 0; i < lenght; i++){
-            ret[i] = list.get(i);
-        }
-
-        return ret;
+    public Chart_Report(){
+        data = new TreeMap<>();
     }
 
 
-    public boolean buildHistogram(){
-        CategoryDataset dataset = createDataset();
+    public void addData(Double threshold, List<Double> downedNodesFrequency) {
+        data.put(threshold,downedNodesFrequency);
+    }
 
-        JFreeChart chart = ChartFactory.createBarChart(
-                "Cascades Distribution",
-                "threshold",
-                "downed nodes frequency",
+    public boolean buildBoxPlot(){
+        BoxAndWhiskerCategoryDataset dataset = createDataset();
+
+        JFreeChart chart = ChartFactory.createBoxAndWhiskerChart(
+                "cascades distribution",
+                "thresholds",
+                "downed nodes frecuencies",
                 dataset,
-                PlotOrientation.VERTICAL,
-                false,false,false);
+                true);
 
         try{
             String fileSeparator = System.getProperty("file.separator");
@@ -67,7 +48,7 @@ public class Chart_Report {
             if(!file.exists())
                 if(!file.mkdir())
                     return false;
-            relativePath += fileSeparator + "propagation_model_Histogram.PNG";
+            relativePath += fileSeparator + "propagation_model.PNG";
             file = new File(relativePath);
             //creates the file
             ChartUtils.saveChartAsPNG(file,chart,800,300);
@@ -79,13 +60,12 @@ public class Chart_Report {
         return true;
     }
 
-    private CategoryDataset createDataset() {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+    private BoxAndWhiskerCategoryDataset createDataset() {
+        BoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
 
         DecimalFormat thresholdFormat = new DecimalFormat("#0.00");
-        for(int i = 0; i < thresholds.size(); i++){
-            dataset.addValue(downedNodesFrequency.get(i),"",thresholdFormat.format(thresholds.get(i)));
-        }
+        data.forEach((k,v) -> ((DefaultBoxAndWhiskerCategoryDataset) dataset)
+                .add(v,thresholdFormat.format(k),"threshold"));
 
         return dataset;
     }
