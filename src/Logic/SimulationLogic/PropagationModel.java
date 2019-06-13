@@ -25,7 +25,7 @@ public class PropagationModel extends Simulation {
 	public boolean executeSimulation(){
 
         ReportBuilder reportBuilder = null;
-        Chart_Report chart = new Chart_Report();
+        Chart_Report chart = new Chart_Report(totalNodesInNetwork);
 	    while(threshold <= 1) {
             Random random = new Random();
             int iteration = 0;
@@ -49,15 +49,8 @@ public class PropagationModel extends Simulation {
                         ++tries;
                 }
 
+                reportBuilder.addData(availableAirports.size(),downedAirports.size());
 
-                final Integer nAvailableNodes = availableAirports.size();
-                final Integer nDownedNodes = downedAirports.size();
-
-                Double availableNodesFrequency = (nAvailableNodes.doubleValue()/totalNodesInNetwork.doubleValue());
-                Double downedNodesFrequency = nDownedNodes.doubleValue()/totalNodesInNetwork.doubleValue();
-
-                reportBuilder.addData(availableNodesFrequency
-                        ,downedNodesFrequency);
              iteration++;
             }
 
@@ -68,7 +61,7 @@ public class PropagationModel extends Simulation {
 
         }
 
-        if(!chart.buildBoxPlot())
+        if(!chart.buildBoxPlot() || !chart.buildBarChart())
             return false;
 
         return true;
