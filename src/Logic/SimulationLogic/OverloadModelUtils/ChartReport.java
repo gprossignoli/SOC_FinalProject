@@ -18,11 +18,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Chart_Report {
+public class ChartReport {
     private List<Integer> downedNodesPerIterationModeA;
     private List<Integer> downedNodesPerIterationModeB;
 
-    public Chart_Report(){
+    public ChartReport(){
         downedNodesPerIterationModeA = new ArrayList<>();
         downedNodesPerIterationModeB = new ArrayList<>();
     }

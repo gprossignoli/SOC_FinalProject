@@ -15,10 +15,10 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 
-public class Chart_Report {
+public class ChartReport {
     private Map<Double, Pair<List<Integer>,Double>> data;
     private Integer totalNodesInNetwork;
-    public Chart_Report(Integer totalNodesInNetwork){
+    public ChartReport(Integer totalNodesInNetwork){
         data = new TreeMap<>();
         this.totalNodesInNetwork = totalNodesInNetwork;
     }

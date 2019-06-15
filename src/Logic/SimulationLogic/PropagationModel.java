@@ -1,7 +1,7 @@
 package Logic.SimulationLogic;
 
 import Logic.Airport;
-import Logic.SimulationLogic.PropagationModelUtils.Chart_Report;
+import Logic.SimulationLogic.PropagationModelUtils.ChartReport;
 import Logic.SimulationLogic.PropagationModelUtils.ReportBuilder;
 
 import java.util.*;
@@ -25,7 +25,7 @@ public class PropagationModel extends Simulation {
 	public boolean executeSimulation(){
 
         ReportBuilder reportBuilder = null;
-        Chart_Report chart = new Chart_Report(totalNodesInNetwork);
+        ChartReport chart = new ChartReport(totalNodesInNetwork);
 	    while(threshold <= 1) {
             Random random = new Random();
             int iteration = 0;

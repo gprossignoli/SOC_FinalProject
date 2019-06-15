@@ -29,7 +29,7 @@ public class ReportBuilder {
         downedNodesFrequency.add(downedNodes);
     }
 
-    public boolean buildReport(Chart_Report chart){
+    public boolean buildReport(ChartReport chart){
         //key = availableNodes, value = downedNodes
         Pair<Double,Double> averages = calculateAverages();
         Pair<Double,Double> variances = calculateVariance(averages.getKey(),averages.getValue());

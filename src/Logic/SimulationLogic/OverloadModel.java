@@ -2,7 +2,7 @@ package Logic.SimulationLogic;
 
 import Logic.Airport;
 import Logic.SimulationLogic.OverloadModelUtils.Report;
-import Logic.SimulationLogic.OverloadModelUtils.Chart_Report;
+import Logic.SimulationLogic.OverloadModelUtils.ChartReport;
 import javafx.util.Pair;
 
 import java.util.*;
@@ -44,7 +44,7 @@ public class OverloadModel extends Simulation {
             int tries = 0;
             Report reportA = new Report();
             Report reportB = new Report();
-            Chart_Report XYReport = new Chart_Report();
+            ChartReport XYReport = new ChartReport();
 
 
             //Mode A
