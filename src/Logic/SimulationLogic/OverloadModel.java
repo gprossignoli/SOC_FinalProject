@@ -49,15 +49,18 @@ public class OverloadModel extends Simulation {
 
             //Mode A
             // if the network status doesn't change in the 3 next steps it would assume that the cascade it's stopped
-            while (availableAirportsModeA.size() > 0 && tries < 3) {
+            while (availableAirportsModeA.size() > 0 && tries <= 3) {
                 int initialDownedAirportsSize = downedAirportsModeA.size();
                 availableAirportsModeA.forEach((k,v) -> {
-                        if(v > Lfail && !airports.get(k).isLocked()) {
-                         downedAirportsModeA.add(k);
-                         airports.get(k).setLock(true);
-                         redistributeLoad();
+                    if(!airports.get(k).isLocked()) {
+                        availableAirportsModeA.put(k, v + D);
+                        if (v > Lfail) {
+                            downedAirportsModeA.add(k);
+                            airports.get(k).setLock(true);
+                            redistributeLoad();
                         }
                     }
+                }
                 );
                 if(initialDownedAirportsSize == downedAirportsModeA.size())
                     tries++;
@@ -71,16 +74,19 @@ public class OverloadModel extends Simulation {
             // if the network status doesn't change in the 3 next steps it would assume that the cascade it's stopped
             tries = 0;
             airports.forEach((k,v) -> v.setLock(false));
-            while (availableAirportsModeB.size() > 0 && tries < 3) {
+            while (availableAirportsModeB.size() > 0 && tries <= 3) {
                 int initialDownedAirportsSize = downedAirportsModeB.size();
                 availableAirportsModeB.forEach((k,v) -> {
-                            if(v > Lfail && !airports.get(k).isLocked()) {
-                                downedAirportsModeB.add(k);
-                              Airport a = airports.get(k);
-                              a.setLock(true);
-                              a.getNeighbors().forEach((n)->redistributeLoad(n));
-                            }
+                    if (!airports.get(k).isLocked()) {
+                        availableAirportsModeB.put(k, v + D);
+                        if (v > Lfail) {
+                            downedAirportsModeB.add(k);
+                            Airport a = airports.get(k);
+                            a.setLock(true);
+                            a.getNeighbors().forEach((n) -> redistributeLoad(n));
                         }
+                    }
+                }
                 );
                 if(initialDownedAirportsSize == downedAirportsModeB.size())
                     tries++;

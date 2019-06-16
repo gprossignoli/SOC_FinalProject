@@ -1,2 +1,0 @@
-OverLoadModel 0.1 0.2 0.3 0.1 0.05
-PropagationModel 5 0.1 50 

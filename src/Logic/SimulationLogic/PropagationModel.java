@@ -41,7 +41,7 @@ public class PropagationModel extends Simulation {
                 int tries = 0;
 
                 // if the network status doesn't change in the 3 next steps it would assume that the cascade it's stopped
-                while (availableAirports.size() > 0 && tries < 3) {
+                while (availableAirports.size() > 0 && tries <= 3) {
                     String iata = availableAirports.get(random.nextInt(availableAirports.size()));
                     a = airports.get(iata);
 
